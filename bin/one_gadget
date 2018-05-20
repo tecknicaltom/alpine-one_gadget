@@ -1,0 +1,19 @@
+#!/bin/bash
+
+one_gadget_args=()
+mountdir="$(mktemp -d)"
+
+for arg in "$@"
+do
+	if [ -e "$arg" ]
+	then
+		base="$(basename "$arg")"
+		cp "$arg" "$mountdir"/"$base"
+		arg="/workdir/$base"
+	fi
+	one_gadget_args+=($arg)
+done
+
+docker run --tty --rm --volume "$mountdir":/workdir tecknicaltom/one_gadget ${one_gadget_args[@]}
+
+rm -rf "$mountdir"
